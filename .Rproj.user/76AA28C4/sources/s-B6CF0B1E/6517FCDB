@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1525113705113.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "6517FCDB",
+    "lastKnownWriteTime" : 1525113721,
+    "last_content_update" : 1525113721856,
+    "path" : "~/Dropbox/CMU/thesis/r_code/packages/Stepwise/packages_dependencies/KalmanFilteR/R/short-cut_functions.R",
+    "project_path" : "R/short-cut_functions.R",
+    "properties" : {
+        "cursorPosition" : "23,15",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 5,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

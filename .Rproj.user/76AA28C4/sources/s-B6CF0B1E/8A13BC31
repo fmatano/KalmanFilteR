@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1525101376558.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "8A13BC31",
+    "lastKnownWriteTime" : 1522418834,
+    "last_content_update" : 1522418834,
+    "path" : "~/Dropbox/CMU/thesis/r_code/packages/Stepwise/packages_dependencies/KalmanFilteR/R/validation_model_functions.R",
+    "project_path" : "R/validation_model_functions.R",
+    "properties" : {
+        "cursorPosition" : "82,8",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

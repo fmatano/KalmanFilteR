@@ -1,0 +1,195 @@
+# load the file with data first
+source("Scripts/load_lindsay_3D-1data.R")
+library(ggplot2)
+library(magrittr)
+
+### COMPARE MLE AND KF LEAVE-ONE-OUT
+n_units <- 58
+n_sim <- 30
+n_seq <- seq(n_units, 400, by = 5)
+time_sonia_loo_mle <- time_fra_loo_mle <- vector(mode = 'list', length(n_seq))
+mle <- TRUE
+cat("\n You are computing the ", ifelse(mle, "MLE", "KF"), "solution \n")
+
+
+for(n in 1:length(n_seq)){
+
+  cat("\n # equations ", n_seq[n], '\n')
+
+  # choose number of equations
+  ixs <- 1:n_seq[n]
+  Ztrain <- Z_tot[,ixs]
+  Ztest  <- Ztest_tot[,ixs]
+
+  # centering the variables
+  spike_center <- apply(Ztrain, 2, mean)
+  v_center <- apply(velocity.Train, 2, mean)
+
+  # encoding
+  encoding_model <- kalman_train(
+    x = scale(velocity.Train, center = v_center, scale = FALSE),
+    z = scale(Ztrain, center = spike_center, scale = FALSE),
+    fit_A = TRUE, unit_interactions = TRUE)
+  Qm1 <- solve(encoding_model$Q)
+  ix <- 1:27
+
+  cat("\n Yes short-cut: \n")
+  for(jj in 1:n_sim){
+    time_fra_loo_mle[[n]] <- vector(mode = 'list', n_sim)
+    t0 <- proc.time()
+
+    for(ii in 1:nrow(encoding_model$Q)) {
+      Qm1_m1 <- get_inverse_matrix_m1(Qm1, ii)
+      H <- encoding_model$H[-ii,]
+      Mole <- get_Mole(H = encoding_model$H[-ii,], Qm1 = Qm1_m1)
+      vhat_shortcut <- Mole %*% t(Ztest[ix, -ii])
+    }
+    time_fra_loo_mle[[n]][[jj]] <- proc.time() - t0
+    cat(time_fra_loo_mle[[n]][[jj]], '\n')
+  }
+
+  # Re - computing the model every time
+  cat("\n No short-cut: \n")
+  for(jj in 1:n_sim){
+    time_sonia_loo_mle[[n]] <- vector(mode = 'list', n_sim)
+    t0 <- proc.time()
+    for(ii in 1:nrow(encoding_model$Q)) {
+      Qm1_m1 <- solve(encoding_model$Q[-ii,-ii])
+      H <- encoding_model$H[-ii,]
+      Mole <- get_Mole(H = encoding_model$H[-ii,], Qm1 = Qm1_m1)
+      vhat_shortcut <- Mole %*% t(Ztest[ix, -ii])
+    }
+    time_sonia_loo_mle[[n]][[jj]] <- proc.time() - t0
+    cat(time_sonia_loo_mle[[n]][[jj]], '\n')
+  }
+}
+
+
+
+time_sonia_loo_kf <- time_fra_loo_kf <- vector(mode = 'list', length(n_seq))
+mle <- FALSE
+cat("You are computing the ", ifelse(mle, "MLE", "KF"), "solution \n")
+for(n in 1:length(n_seq)){
+
+  cat("\n # equations ", n_seq[n], '\n')
+
+  # choose number of equations
+  ixs <- 1:n_seq[n]
+  Ztrain <- Z_tot[,ixs]
+  Ztest  <- Ztest_tot[,ixs]
+
+  # centering the variables
+  spike_center <- apply(Ztrain, 2, mean)
+  v_center <- apply(velocity.Train, 2, mean)
+
+  # encoding
+  encoding_model <- kalman_train(
+    x = scale(velocity.Train, center = v_center, scale = FALSE),
+    z = scale(Ztrain, center = spike_center, scale = FALSE),
+    fit_A = TRUE, unit_interactions = TRUE)
+  Qm1 <- solve(encoding_model$Q)
+  ix <- 1:27
+
+  cat("\n Yes short-cut: \n")
+  for(jj in 1:n_sim){
+    time_fra_loo_kf[[n]] <- vector(mode = 'list', n_sim)
+    t0 <- proc.time()
+    tmp <- kalman_decode_loo(A = encoding_model$A, W = encoding_model$W,
+                              H = encoding_model$H, Q = encoding_model$Q,
+                              z = Ztest[ix,])
+    time_fra_loo_kf[[n]][[jj]] <- proc.time() - t0
+    cat(time_fra_loo_kf[[n]][[jj]], '\n')
+  }
+
+  # Re - computing the model every time
+  cat("\n No short-cut: \n")
+  for(jj in 1:n_sim){
+    time_sonia_loo_kf[[n]] <- vector(mode = 'list', n_sim)
+    t0 <- proc.time()
+    tmp2 <- list()
+    for(ii in 1:nrow(encoding_model$Q)) {
+      tmp2[[ii]] <- kalman_decode(A = encoding_model$A, W = encoding_model$W,
+                            H = encoding_model$H[-ii,], Q = encoding_model$Q[-ii,-ii],
+                            z = Ztest[ix,-ii], MLE = mle)
+    }
+    time_sonia_loo_kf[[n]][[jj]] <- proc.time() - t0
+    cat(time_sonia_loo_kf[[n]][[jj]], '\n')
+  }
+}
+
+# Remember to rescale min to sec
+save(time_sonia_loo_mle, time_fra_loo_mle, time_sonia_loo_kf, time_fra_loo_kf,
+     file = paste0('timing_objects_',n_sim,'times.RData'))
+
+load("timing_objects.RData")
+
+# PLOT THE RESULTS
+# l <- time_sonia_loo_kf %>% length
+# n_seq <- n_seq[1:l]
+# time_mle <- c(sapply(time_sonia_loo_mle[1:l], function(x) x[[1]]),
+#               sapply(time_fra_loo_mle[1:l], function(x) x[[1]]))
+#
+# time_kf <- c(sapply(time_sonia_loo_kf[1:l], function(x) x[[1]]),
+#              sapply(time_fra_loo_kf[1:l], function(x) x[[1]]))
+#
+# time_frame <- data.frame(time_min = time_mle/60,
+#                          num_equations = rep(n_seq, times = 2),
+#                          approach = factor(rep(1:2, each = l)))
+#
+# time_ratio <- c(sapply(time_sonia_loo_mle[1:l], function(x) x[[1]])/
+#                   sapply(time_fra_loo_mle[1:l], function(x) x[[1]]),
+#                 sapply(time_sonia_loo_kf[1:l], function(x) x[[1]])/
+#                   sapply(time_fra_loo_kf[1:l], function(x) x[[1]]))
+#
+# time_frame <- data.frame(time_ratio = time_ratio,
+#                          num_equations = rep(n_seq[1:l], times = 2),
+#                          approach = factor(rep(c("OLE", "KF"), each = l)))
+#
+#
+#
+# ggplot(time_frame, aes(x = num_equations, y = time_ratio,
+#                        color = approach)) +
+#   geom_line(size = 2) +
+#   theme_bw() +
+#   ggtitle("Computational efficiency of the short-cut formula") +
+#     scale_color_manual(name="", values = c("darkblue", "orange")) +
+#   ylab("re-estimagin/short-cut formula") +
+#   xlab("# equations")
+# g1 <- ggplot(time_frame, aes(x = num_equations, y = time_min,
+#                              color = factor(approach))) +
+#   theme_bw() +
+#   labs(x="# equations", y="time (min)") +
+#   geom_line(size = 2) +
+#   ggtitle("OLE") +
+#   scale_color_manual(name="", labels = c("re-estimating", "short-cut formula"),
+#                        values = c("darkblue", "orange")) +
+#   scale_fill_discrete(name="",
+#                       breaks=c("1", "2"),
+#                       labels=c("short-cut formula","re-estimating"))+
+#   theme(text = element_text(size = 15), legend.justification = c(0, 1),
+#         legend.position = c(0.1, 0.9))
+
+
+# time_frame <- data.frame(time_min = time_kf/60,
+#                          num_equations = rep(n_seq, times = 2),
+#                          approach = factor(rep(1:2, each = l)))
+#
+# g2 <- ggplot(time_frame, aes(x = num_equations, y = time_min,
+#                              color = factor(approach))) +
+#   theme_bw() +
+#   labs(x="# equations", y="time (min)") +
+#   geom_line(size = 2) +
+#   ggtitle("KF") +
+#   scale_color_manual(name="", labels = c("re-estimating", "short-cut formula"),
+#                      values = c("darkblue", "orange")) +
+#   scale_fill_discrete(name="",
+#                       breaks=c("1", "2"),
+#                       labels=c("short-cut formula","re-estimating"))+
+#   theme(text = element_text(size = 15), legend.justification = c(0, 1),
+#         legend.position = c(0.1, 0.9))
+#
+# grid.arrange(g1, g2, ncol = 2)
+
+
+
+

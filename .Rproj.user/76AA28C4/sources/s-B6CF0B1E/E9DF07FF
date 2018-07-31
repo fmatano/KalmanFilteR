@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1520968287760.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "E9DF07FF",
+    "lastKnownWriteTime" : 1525100089,
+    "last_content_update" : 1525100089172,
+    "path" : "~/Dropbox/CMU/thesis/r_code/packages/Stepwise/packages_dependencies/KalmanFilteR/Scripts/load_lindsay_3D-1data.R",
+    "project_path" : "Scripts/load_lindsay_3D-1data.R",
+    "properties" : {
+        "cursorPosition" : "27,30",
+        "scrollLine" : "0"
+    },
+    "relative_order" : 4,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

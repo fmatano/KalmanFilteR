@@ -1,0 +1,22 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1520968218929.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "36|21|48|2|\n52|21|63|2|\n",
+    "hash" : "0",
+    "id" : "BC438E07",
+    "lastKnownWriteTime" : 1528292504,
+    "last_content_update" : 1528292505016,
+    "path" : "~/Dropbox/CMU/thesis/r_code/packages/Stepwise/packages_dependencies/KalmanFilteR/Scripts/time_comparison.R",
+    "project_path" : "Scripts/time_comparison.R",
+    "properties" : {
+        "cursorPosition" : "114,44",
+        "scrollLine" : "74"
+    },
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

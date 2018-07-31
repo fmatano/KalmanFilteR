@@ -1,0 +1,116 @@
+source("Scripts/load_lindsay_3D-1data.R")
+library(ggplot2)
+
+### COMPARE MLE AND KF LEAVE-ONE-OUT
+
+n_seq <- seq(n_units, 400, by = 5)
+time_sonia_loo_mle <- time_fra_loo_mle <- list()
+mle <- TRUE
+cat("\n You are computing the ", ifelse(mle, "MLE", "KF"), "solution \n")
+
+cat("\n # equations ", n_seq[n], '\n')
+
+# choose number of equations
+ixs <- 1:n_seq[n]
+Ztrain <- Z_tot[,ixs]
+Ztest  <- Ztest_tot[,ixs]
+
+# centering the variables
+spike_center <- apply(Ztrain, 2, mean)
+v_center <- apply(velocity.Train, 2, mean)
+
+# encoding
+encoding_model <- kalman_train(
+  x = scale(velocity.Train, center = v_center, scale = FALSE),
+  z = scale(Ztrain, center = spike_center, scale = FALSE),
+  fit_A = TRUE, unit_interactions = TRUE)
+Qm1  <- solve(encoding_model$Q)
+# Qm1 <- diag(1, ncol(Qm1))
+Qm12 <- expm::sqrtm(Qm1)
+
+i <- 1
+V <- cbind(c(1, rep(0, 57)), rbind(rep(0, 57), solve(encoding_model$Q[-i,-i])))
+Qm12 <- expm::sqrtm(V)
+H <- encoding_model$H 
+ztest_center <- scale(Ztest, center = spike_center, scale = FALSE)
+vtest_center <- scale(velocity.Test, center = v_center, scale = FALSE)
+
+
+Hbar  <- Qm12  %*% H
+zstar <- Qm12 %*% t(ztest_center)
+vhat  <- solve(t(Hbar) %*% Hbar) %*% t(Hbar) %*% zstar
+vhat_bis <- solve(t(H) %*% Qm1 %*% H) %*% t(H) %*% Qm1 %*% t(ztest_center)
+
+# minus 1
+i <- 1
+vm1_bis <- solve(t(Hbar[-i,]) %*% Hbar[-i,]) %*% t(Hbar[-i,]) %*% zstar[-i,]
+
+
+K <- Hbar %*% solve(t(Hbar) %*% Hbar) %*% t(Hbar)
+hi <- matrix(Hbar[i,], ncol = 1)
+zhat <- Hbar %*% t(vtest_center) 
+resi <- matrix((zstar - zhat)[i,], nrow = 1)
+kii <- K[i, i]
+vm1 <- vhat - ((solve(t(Hbar) %*% Hbar) %*% hi) %*% resi)/(1 - kii)
+
+
+# tmp <- solve(t(Hbar[-i,]) %*% Hbar[-i,])
+tmp <- solve(t(H[-i,]) %*% solve(encoding_model$Q[-i,-i]) %*% H[-i,])
+
+i <- 1
+V <- cbind(c(1, rep(0, 57)), rbind(rep(0, 57), solve(encoding_model$Q[-i,-i])))
+Qm12 <- expm::sqrtm(V)
+Hbar <- Qm12  %*% H
+
+tmp2 <- solve(t(H) %*% V %*% H)
+
+
+tmp2 <- solve(t(Hbar) %*% Hbar) + (solve(t(Hbar) %*% Hbar) %*% hi %*% t(hi) %*% solve(t(Hbar) %*% Hbar))/(1- kii)
+
+all.equal(tmp, tmp2)
+
+
+
+tmp <- t(Hbar[-i,]) %*% zstar[-i,]
+tmp2 <- t(Hbar) %*% zstar - hi %*% matrix(zstar[i,], nrow = 1)
+all.equal(tmp, tmp2)
+
+
+# tmp2 <- solve(t(Hbar[-i,]) %*% Hbar[-i,])
+
+
+vm1[1:3, 1:3]
+
+
+
+vm1_bis[1:3, 1:3]
+
+
+Qm1 <- solve(encoding_model$Q)
+H <- encoding_model$H
+Lambda11 <- Qm1[1, 1]
+Lambda21 <- matrix(Qm1[-1, 1], ncol = 1)
+Lambda12 <- t(Lambda21)
+Lambda22 <- Qm1[-1, -1]
+
+A <- matrix(c(1, 0, 0), ncol = 3, nrow = 1)
+B1 <- matrix(H[1,], ncol = 3)
+B2 <- H[-1,]
+C <- solve(encoding_model$Q[-1,-1])
+
+Adagger <- t(A) %*% solve(A %*% t(A))
+a <- Lambda11 %*% t(Adagger) %*% t(B1)
+b <- (- (C %*% B2) + (Lambda21 %*% B1) + (Lambda22 %*% B2)) %*% Adagger
+
+
+tmp  <- (t(H) %*% Qm1 %*% H)
+
+V <- rbind(c(a, t(b)), cbind(b, C))
+Htilde <- rbind(A, B2)
+tmp2 <-  (t(Htilde) %*% V %*% Htilde)
+
+
+
+
+
+

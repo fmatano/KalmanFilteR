@@ -1,0 +1,16 @@
+memory profiling: GC profiling: line profiling: sample.interval=10000
+#File 1: /Users/francescamatano/Dropbox/CMU/thesis/r_code/packages/Stepwise/packages_dependencies/KalmanFilteR/R/kalman_filter_functions.R
+#File 2: 
+#File 3: <expr>
+:1911200:374121356:133559272:115:"forceSymmetric" "forceSymmetric" "Matrix" "Schur" "expm::sqrtm" 1#114 "get_Mole" 2#6 "shortcut_mle" 3#1 "force" "doTryCatch" "tryCatchOne" "tryCatchList" "doTryCatch" "tryCatchOne" "tryCatchList" "tryCatch" "profvis::profvis" 
+:1921208:374221813:135583168:543:"length" "array" "as.matrix.default" "as.matrix" "solve.default" "solve" "standardGeneric" "solve" "expm::sqrtm" 1#114 "get_Mole" 2#6 "shortcut_mle" 3#1 "force" "doTryCatch" "tryCatchOne" "tryCatchList" "doTryCatch" "tryCatchOne" "tryCatchList" "tryCatch" "profvis::profvis" 
+:1955354:374221813:140995960:1534:"standardGeneric" "solve" "expm::sqrtm" 1#114 "get_Mole" 2#6 "shortcut_mle" 3#1 "force" "doTryCatch" "tryCatchOne" "tryCatchList" "doTryCatch" "tryCatchOne" "tryCatchList" "tryCatch" "profvis::profvis" 
+:1983239:374221813:145332824:1171:"expm::sqrtm" 1#114 "get_Mole" 2#6 "shortcut_mle" 3#1 "force" "doTryCatch" "tryCatchOne" "tryCatchList" "doTryCatch" "tryCatchOne" "tryCatchList" "tryCatch" "profvis::profvis" 
+:2031363:374221813:152724712:1932:"length" "expm::sqrtm" 1#114 "get_Mole" 2#6 "shortcut_mle" 3#1 "force" "doTryCatch" "tryCatchOne" "tryCatchList" "doTryCatch" "tryCatchOne" "tryCatchList" "tryCatch" "profvis::profvis" 
+:2053134:374221813:156033808:841:"standardGeneric" "solve" "expm::sqrtm" 1#114 "get_Mole" 2#6 "shortcut_mle" 3#1 "force" "doTryCatch" "tryCatchOne" "tryCatchList" "doTryCatch" "tryCatchOne" "tryCatchList" "tryCatch" "profvis::profvis" 
+:2076569:374221813:159583200:892:"standardGeneric" "solve" "expm::sqrtm" 1#114 "get_Mole" 2#6 "shortcut_mle" 3#1 "force" "doTryCatch" "tryCatchOne" "tryCatchList" "doTryCatch" "tryCatchOne" "tryCatchList" "tryCatch" "profvis::profvis" 
+:2106956:374221813:164159128:1131:"expm::sqrtm" 1#114 "get_Mole" 2#6 "shortcut_mle" 3#1 "force" "doTryCatch" "tryCatchOne" "tryCatchList" "doTryCatch" "tryCatchOne" "tryCatchList" "tryCatch" "profvis::profvis" 
+:2129330:374221813:167515768:820:"solve.default" "solve" "standardGeneric" "solve" "expm::sqrtm" 1#114 "get_Mole" 2#6 "shortcut_mle" 3#1 "force" "doTryCatch" "tryCatchOne" "tryCatchList" "doTryCatch" "tryCatchOne" "tryCatchList" "tryCatch" "profvis::profvis" 
+:2151430:374221813:170814672:796:"standardGeneric" "solve" "expm::sqrtm" 1#114 "get_Mole" 2#6 "shortcut_mle" 3#1 "force" "doTryCatch" "tryCatchOne" "tryCatchList" "doTryCatch" "tryCatchOne" "tryCatchList" "tryCatch" "profvis::profvis" 
+:2176101:374221813:174485360:876:"expm::sqrtm" 1#114 "get_Mole" 2#6 "shortcut_mle" 3#1 "force" "doTryCatch" "tryCatchOne" "tryCatchList" "doTryCatch" "tryCatchOne" "tryCatchList" "tryCatch" "profvis::profvis" 
+:2199709:374221813:177987432:828:"expm::sqrtm" 1#114 "get_Mole" 2#6 "shortcut_mle" 3#1 "force" "doTryCatch" "tryCatchOne" "tryCatchList" "doTryCatch" "tryCatchOne" "tryCatchList" "tryCatch" "profvis::profvis" 
